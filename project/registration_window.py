@@ -30,4 +30,5 @@ class RegistrationWindow(QtWidgets.QWidget):
     def _on_button_registration(self):
         # TODO валидация и запись пользователя в БД
         # Not implemented yet
+
         pass

@@ -17,6 +17,7 @@ class ResetPasswordWindow(QtWidgets.QWidget):
 
     def _on_button_change_password(self):
         # TODO
+        # update в БД
         pass
 
     def _on_button_cancel(self):

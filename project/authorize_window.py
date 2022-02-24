@@ -3,6 +3,7 @@ from registration_window import *
 from reset_password_window import *
 from main_window import *
 from PyQt5.QtCore import QSettings
+import mariadb
 
 
 class AuthorizeWindow(QtWidgets.QWidget):
@@ -35,6 +36,15 @@ class AuthorizeWindow(QtWidgets.QWidget):
         self.__ui.line_edit_username.setText(self.__settings.value('auth/username'))
         self.__ui.line_edit_password.setText(self.__settings.value('auth/password'))
 
+        db_params = {
+            'user': 'root',
+            'password': 'root',
+            'host': '127.0.0.1',
+            'database': 'my_test_db',
+        }
+
+        self.__db = mariadb.connect(**db_params)
+
     def _on_button_registration(self):
         self.__registration_window.show()
         self.close()
@@ -43,15 +53,25 @@ class AuthorizeWindow(QtWidgets.QWidget):
         username = self.__ui.line_edit_username.text()
         password = self.__ui.line_edit_password.text()
 
-        self.__logger.debug('login - {}'.format(username))
-
         if self.__ui.check_box_remember.isChecked():
             self.__settings.setValue('auth/username', username)
             self.__settings.setValue('auth/password', password)
 
-        self.__main_window = MainWindow(username, self)
-        self.__main_window.show()
-        self.close()
+        cur = self.__db.cursor()
+        cur.execute('SELECT * FROM Users WHERE username=\'{}\' and password=\'{}\';'.format(
+            username, password
+        ))
+
+        if cur.fetchone() is not None:
+            self.__main_window = MainWindow(username, self)
+            self.__main_window.show()
+            self.close()
+        else:
+            QtWidgets.QMessageBox.information(self, 'Error',
+                                              'Пользователя с таким именем или паролем не существует',
+                                              QtWidgets.QMessageBox.Ok)
+
+
 
     def _on_button_cancel(self):
         self.close()
