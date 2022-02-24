@@ -23,9 +23,9 @@ class Ui_AuthorizeWindow(object):
         self.verticalLayout_4.setObjectName("verticalLayout_4")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
-        self.line_edit_login = QtWidgets.QLineEdit(self.widget)
-        self.line_edit_login.setObjectName("line_edit_login")
-        self.verticalLayout_2.addWidget(self.line_edit_login)
+        self.line_edit_username = QtWidgets.QLineEdit(self.widget)
+        self.line_edit_username.setObjectName("line_edit_username")
+        self.verticalLayout_2.addWidget(self.line_edit_username)
         self.line_edit_password = QtWidgets.QLineEdit(self.widget)
         self.line_edit_password.setObjectName("line_edit_password")
         self.verticalLayout_2.addWidget(self.line_edit_password)
@@ -76,7 +76,7 @@ class Ui_AuthorizeWindow(object):
     def retranslateUi(self, AuthorizeWindow):
         _translate = QtCore.QCoreApplication.translate
         AuthorizeWindow.setWindowTitle(_translate("AuthorizeWindow", "Form"))
-        self.line_edit_login.setPlaceholderText(_translate("AuthorizeWindow", "Имя пользователя"))
+        self.line_edit_username.setPlaceholderText(_translate("AuthorizeWindow", "Имя пользователя"))
         self.line_edit_password.setPlaceholderText(_translate("AuthorizeWindow", "Пароль"))
         self.button_login.setText(_translate("AuthorizeWindow", "Войти"))
         self.button_registration.setText(_translate("AuthorizeWindow", "Регистрация"))

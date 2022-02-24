@@ -3,8 +3,10 @@ import logging
 
 
 class RegistrationWindow(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, main_window):
         super(RegistrationWindow, self).__init__()
+
+        self.__main_window = main_window
 
         self.__ui = Ui_RegistrationWindow()
         self.__ui.setupUi(self)
@@ -21,9 +23,12 @@ class RegistrationWindow(QtWidgets.QWidget):
         self.__ui.button_registration.clicked.connect(self._on_button_registration)
 
     def _on_button_cancel(self):
+        # TODO
         # Not implemented yet
-        pass
+        self.__main_window.show()
+        self.close()
 
     def _on_button_registration(self):
+        # TODO
         # Not implemented yet
         pass
