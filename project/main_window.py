@@ -2,9 +2,10 @@ from ui_main_window import *
 
 
 class MainWindow(QtWidgets.QMainWindow):
-    def __init__(self, username):
+    def __init__(self, username, authorized_window):
         super(MainWindow, self).__init__()
 
+        self.__authorized_window = authorized_window
         self.__ui = Ui_MainWindow()
         self.__ui.setupUi(self)
 
@@ -17,6 +18,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         self.__ui.button_add.clicked.connect(self._on_button_add)
         self.__ui.navigation_panel.clicked.connect(self._on_navigation_panel_clicked)
+        self.__ui.button_logout.clicked.connect(self._on_button_logout)
 
     def _on_navigation_panel_clicked(self, index):
         print(index.data())
@@ -28,3 +30,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def _on_button_add(self):
         pass
         # TODO: Not implemented yet
+
+    def _on_button_logout(self):
+        self.__authorized_window.show()
+        self.close()

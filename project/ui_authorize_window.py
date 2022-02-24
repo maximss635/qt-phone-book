@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/authorize_window.ui'
+# Form implementation generated from reading ui file 'ui/ui_authorize_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -62,9 +62,9 @@ class Ui_AuthorizeWindow(object):
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
         spacerItem1 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem1)
-        self.pushButton = QtWidgets.QPushButton(self.widget)
-        self.pushButton.setObjectName("pushButton")
-        self.horizontalLayout_3.addWidget(self.pushButton)
+        self.button_reset_password = QtWidgets.QPushButton(self.widget)
+        self.button_reset_password.setObjectName("button_reset_password")
+        self.horizontalLayout_3.addWidget(self.button_reset_password)
         spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_3.addItem(spacerItem2)
         self.verticalLayout_3.addLayout(self.horizontalLayout_3)
@@ -83,4 +83,4 @@ class Ui_AuthorizeWindow(object):
         self.button_cancel.setText(_translate("AuthorizeWindow", "Отмена"))
         self.check_box_remember.setText(_translate("AuthorizeWindow", "Запомнить"))
         self.check_box_show_pasword.setText(_translate("AuthorizeWindow", "Показать пароль"))
-        self.pushButton.setText(_translate("AuthorizeWindow", "Забыли пароль"))
+        self.button_reset_password.setText(_translate("AuthorizeWindow", "Забыли пароль"))

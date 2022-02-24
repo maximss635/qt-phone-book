@@ -1,5 +1,6 @@
 from ui_authorize_window import *
 from registration_window import *
+from reset_password_window import *
 from main_window import *
 from PyQt5.QtCore import QSettings
 
@@ -10,14 +11,16 @@ class AuthorizeWindow(QtWidgets.QWidget):
 
         self.__ui = Ui_AuthorizeWindow()
         self.__ui.setupUi(self)
-        self.setFixedSize(290, 210)
+        self.setFixedSize(*WINDOW_SIZE)
 
         self.__main_window = None
         self.__registration_window = RegistrationWindow(self)
+        self.__reset_password_window = ResetPasswordWindow(self)
 
         self.__ui.button_registration.clicked.connect(self._on_button_registration)
         self.__ui.button_login.clicked.connect(self._on_button_login)
         self.__ui.button_cancel.clicked.connect(self._on_button_cancel)
+        self.__ui.button_reset_password.clicked.connect(self._on_button_reset_password)
         self.__ui.check_box_show_pasword.clicked.connect(self._on_check_box_show_password)
 
         self._on_check_box_show_password(False)
@@ -46,7 +49,7 @@ class AuthorizeWindow(QtWidgets.QWidget):
             self.__settings.setValue('auth/username', username)
             self.__settings.setValue('auth/password', password)
 
-        self.__main_window = MainWindow(username)
+        self.__main_window = MainWindow(username, self)
         self.__main_window.show()
         self.close()
 
@@ -58,3 +61,7 @@ class AuthorizeWindow(QtWidgets.QWidget):
             self.__ui.line_edit_password.setEchoMode(QtWidgets.QLineEdit.EchoMode.Normal)
         else:
             self.__ui.line_edit_password.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
+
+    def _on_button_reset_password(self):
+        self.__reset_password_window.show()
+        self.close()

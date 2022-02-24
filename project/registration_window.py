@@ -1,4 +1,5 @@
 from ui_registration_window import *
+from common import *
 import logging
 
 
@@ -11,7 +12,7 @@ class RegistrationWindow(QtWidgets.QWidget):
         self.__ui = Ui_RegistrationWindow()
         self.__ui.setupUi(self)
 
-        self.setFixedSize(290, 200)
+        self.setFixedSize(*WINDOW_SIZE)
 
         file_handler = logging.FileHandler('registrations.log')
         file_handler.setFormatter(logging.Formatter('%(asctime)s : %(message)s'))
@@ -23,12 +24,10 @@ class RegistrationWindow(QtWidgets.QWidget):
         self.__ui.button_registration.clicked.connect(self._on_button_registration)
 
     def _on_button_cancel(self):
-        # TODO
-        # Not implemented yet
         self.__main_window.show()
         self.close()
 
     def _on_button_registration(self):
-        # TODO
+        # TODO валидация и запись пользователя в БД
         # Not implemented yet
         pass

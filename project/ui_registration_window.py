@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/registration_window.ui'
+# Form implementation generated from reading ui file 'ui/ui_registration_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -14,9 +14,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_RegistrationWindow(object):
     def setupUi(self, RegistrationWindow):
         RegistrationWindow.setObjectName("RegistrationWindow")
-        RegistrationWindow.resize(292, 194)
+        RegistrationWindow.resize(292, 214)
         self.layoutWidget = QtWidgets.QWidget(RegistrationWindow)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 10, 271, 171))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 20, 271, 171))
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)

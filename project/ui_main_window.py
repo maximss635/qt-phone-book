@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/main_window.ui'
+# Form implementation generated from reading ui file 'ui/ui_main_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -18,16 +18,24 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.widget = QtWidgets.QWidget(self.centralwidget)
-        self.widget.setGeometry(QtCore.QRect(160, 70, 471, 251))
+        self.widget.setGeometry(QtCore.QRect(60, 50, 611, 261))
         self.widget.setObjectName("widget")
         self.main_layout = QtWidgets.QVBoxLayout(self.widget)
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setObjectName("main_layout")
-        self.label_hello = QtWidgets.QLabel(self.widget)
-        self.label_hello.setObjectName("label_hello")
-        self.main_layout.addWidget(self.label_hello)
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.label_hello = QtWidgets.QLabel(self.widget)
+        self.label_hello.setObjectName("label_hello")
+        self.horizontalLayout_3.addWidget(self.label_hello)
+        self.button_logout = QtWidgets.QPushButton(self.widget)
+        self.button_logout.setMinimumSize(QtCore.QSize(0, 0))
+        self.button_logout.setMaximumSize(QtCore.QSize(100, 16777215))
+        self.button_logout.setObjectName("button_logout")
+        self.horizontalLayout_3.addWidget(self.button_logout)
+        self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.navigation_panel = QtWidgets.QListWidget(self.widget)
@@ -88,6 +96,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.label_hello.setText(_translate("MainWindow", "TextLabel"))
+        self.button_logout.setText(_translate("MainWindow", "Выйти"))
         __sortingEnabled = self.navigation_panel.isSortingEnabled()
         self.navigation_panel.setSortingEnabled(False)
         item = self.navigation_panel.item(0)

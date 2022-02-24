@@ -17,22 +17,45 @@
    <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
-      <x>160</x>
-      <y>70</y>
-      <width>471</width>
-      <height>251</height>
+      <x>60</x>
+      <y>50</y>
+      <width>611</width>
+      <height>261</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="main_layout">
      <item>
-      <widget class="QLabel" name="label_hello">
-       <property name="text">
-        <string>TextLabel</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="QLabel" name="label_hello">
+           <property name="text">
+            <string>TextLabel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button_logout">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Выйти</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
