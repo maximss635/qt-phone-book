@@ -14,14 +14,14 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_AddingContactWindow(object):
     def setupUi(self, AddingContactWindow):
         AddingContactWindow.setObjectName("AddingContactWindow")
-        AddingContactWindow.resize(294, 217)
+        AddingContactWindow.resize(370, 208)
         self.buttonBox = QtWidgets.QDialogButtonBox(AddingContactWindow)
-        self.buttonBox.setGeometry(QtCore.QRect(110, 180, 181, 32))
+        self.buttonBox.setGeometry(QtCore.QRect(180, 170, 181, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
         self.layoutWidget = QtWidgets.QWidget(AddingContactWindow)
-        self.layoutWidget.setGeometry(QtCore.QRect(10, 20, 271, 151))
+        self.layoutWidget.setGeometry(QtCore.QRect(10, 20, 351, 141))
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -30,12 +30,17 @@ class Ui_AddingContactWindow(object):
         self.line_edit_name.setObjectName("line_edit_name")
         self.verticalLayout.addWidget(self.line_edit_name)
         self.line_edit_phone = QtWidgets.QLineEdit(self.layoutWidget)
+        self.line_edit_phone.setText("")
         self.line_edit_phone.setObjectName("line_edit_phone")
         self.verticalLayout.addWidget(self.line_edit_phone)
         self.line_edit_birthday = QtWidgets.QLineEdit(self.layoutWidget)
         self.line_edit_birthday.setText("")
         self.line_edit_birthday.setObjectName("line_edit_birthday")
         self.verticalLayout.addWidget(self.line_edit_birthday)
+        self.label_info = QtWidgets.QLabel(AddingContactWindow)
+        self.label_info.setGeometry(QtCore.QRect(10, 170, 211, 31))
+        self.label_info.setText("")
+        self.label_info.setObjectName("label_info")
 
         self.retranslateUi(AddingContactWindow)
         self.buttonBox.accepted.connect(AddingContactWindow.accept) # type: ignore
@@ -45,6 +50,6 @@ class Ui_AddingContactWindow(object):
     def retranslateUi(self, AddingContactWindow):
         _translate = QtCore.QCoreApplication.translate
         AddingContactWindow.setWindowTitle(_translate("AddingContactWindow", "Dialog"))
-        self.line_edit_name.setPlaceholderText(_translate("AddingContactWindow", "Имя"))
+        self.line_edit_name.setPlaceholderText(_translate("AddingContactWindow", "Имя (только русские буквы)"))
         self.line_edit_phone.setPlaceholderText(_translate("AddingContactWindow", "Телефон"))
-        self.line_edit_birthday.setPlaceholderText(_translate("AddingContactWindow", "Дата рождения (ДД-ММ-ГГГГ)"))
+        self.line_edit_birthday.setPlaceholderText(_translate("AddingContactWindow", "Дата рождения (ГГГГ-ММ-ДД)"))

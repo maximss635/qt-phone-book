@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
-    <height>347</height>
+    <width>731</width>
+    <height>358</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,8 +19,8 @@
      <rect>
       <x>0</x>
       <y>10</y>
-      <width>611</width>
-      <height>261</height>
+      <width>571</width>
+      <height>251</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="main_layout">
@@ -240,6 +240,11 @@
              <string>Дата рождения</string>
             </property>
            </column>
+           <column>
+            <property name="text">
+             <string>id</string>
+            </property>
+           </column>
           </widget>
          </item>
         </layout>
@@ -250,6 +255,13 @@
           <widget class="QPushButton" name="button_add">
            <property name="text">
             <string>Добавить</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="button_delete">
+           <property name="text">
+            <string>Удалить</string>
            </property>
           </widget>
          </item>
@@ -265,6 +277,13 @@
             </size>
            </property>
           </spacer>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_status">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

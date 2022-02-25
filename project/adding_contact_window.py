@@ -10,9 +10,9 @@ class AddingContactWindow(QtWidgets.QDialog):
 
         self.__ui = Ui_AddingContactWindow()
         self.__ui.setupUi(self)
-        self.setFixedSize(290, 210)
+        self.setFixedSize(370, 210)
 
-        expr = QRegExp("(0[1-9]|[12][0-9]|3[01])-(0[1-9]|[1][0-2])-(19[0-9][0-9]|20[0-9][0-9])")
+        expr = QRegExp("(19[0-9][0-9]|20[0-9][0-9])-(0[1-9]|[1][0-2])-(0[1-9]|[12][0-9]|3[01])")
         validator = QRegExpValidator(expr, self)
         self.__ui.line_edit_birthday.setValidator(validator)
 
@@ -20,7 +20,21 @@ class AddingContactWindow(QtWidgets.QDialog):
         validator = QRegExpValidator(expr, self)
         self.__ui.line_edit_phone.setValidator(validator)
 
+        expr = QRegExp('([а-я]|[А-Я])*')
+        validator = QRegExpValidator(expr, self)
+        self.__ui.line_edit_name.setValidator(validator)
+        self.__ui.line_edit_name.setMaxLength(50)
+
     def get_object(self):
         return (self.__ui.line_edit_name.text(),
                 self.__ui.line_edit_phone.text(),
                 self.__ui.line_edit_birthday.text())
+
+    def accept(self):
+        if not self.__ui.line_edit_name.hasAcceptableInput() or \
+                not self.__ui.line_edit_phone.hasAcceptableInput() or \
+                not self.__ui.line_edit_birthday.hasAcceptableInput():
+            self.__ui.label_info.setText('Ошибка заполнения')
+            return None
+
+        return super(AddingContactWindow, self).accept()
