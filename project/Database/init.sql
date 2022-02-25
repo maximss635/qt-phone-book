@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS my_test_db;
-USE my_test_db;
+CREATE DATABASE IF NOT EXISTS phone_book;
+USE phone_book;
 
 CREATE TABLE Users (
     id INT PRIMARY KEY AUTO_INCREMENT,
