@@ -228,6 +228,14 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
             row = index.row()
             ids_to_remove.add(int(self.__ui.table_contacts.item(row, 3).text()))
 
+        buttons = QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
+        answer = QtWidgets.QMessageBox.question(self, 'Подтвердите действие',
+                                              'Вы уверены, что хотите удалить {} контактов?'.format(len(ids_to_remove)),
+                                              buttons)
+
+        if answer == QtWidgets.QMessageBox.No:
+            return
+
         self._remove_contact_from_db(ids_to_remove)
 
         if self.__ui.check_box_show_all.isChecked():
