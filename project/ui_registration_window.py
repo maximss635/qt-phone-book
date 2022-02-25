@@ -54,6 +54,6 @@ class Ui_RegistrationWindow(object):
         self.line_edit_username.setPlaceholderText(_translate("RegistrationWindow", "Имя пользователя"))
         self.line_edit_password.setPlaceholderText(_translate("RegistrationWindow", "Пароль"))
         self.line_edit_password_2.setPlaceholderText(_translate("RegistrationWindow", "Повторите пароль"))
-        self.line_edit_birthday.setPlaceholderText(_translate("RegistrationWindow", "Дата рождения"))
+        self.line_edit_birthday.setPlaceholderText(_translate("RegistrationWindow", "Дата рождения (ДД-ММ-ГГГГ)"))
         self.button_registration.setText(_translate("RegistrationWindow", "Регистрация"))
         self.button_cancel.setText(_translate("RegistrationWindow", "Отмена"))

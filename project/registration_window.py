@@ -1,3 +1,6 @@
+from PyQt5.QtCore import QRegExp
+from PyQt5.QtGui import QRegExpValidator
+
 from ui_registration_window import *
 
 
@@ -11,6 +14,10 @@ class RegistrationWindow(QtWidgets.QWidget):
         self.__ui.setupUi(self)
 
         self.setFixedSize(290, 210)
+
+        expr = QRegExp('(0[1-9]|[12][0-9]|3[01])-(0[1-9]|[1][0-2])-(19[0-9][0-9]|20[0-9][0-9])')
+        validator = QRegExpValidator(expr, self)
+        self.__ui.line_edit_birthday.setValidator(validator)
 
         self.__ui.button_cancel.clicked.connect(self._on_button_cancel)
         self.__ui.button_registration.clicked.connect(self._on_button_registration)
@@ -45,7 +52,9 @@ class RegistrationWindow(QtWidgets.QWidget):
             username, password
         ))
 
+        cur.close()
         self.__db.commit()
+
         self._redirect_to_authorize()
 
     def _redirect_to_authorize(self):

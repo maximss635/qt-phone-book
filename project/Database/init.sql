@@ -17,3 +17,7 @@ CREATE TABLE Contacts (
 );
 
 INSERT INTO Users (username, password) values ('admin', 'admin');
+
+INSERT INTO Contacts (name, phone, birthday, owner_id) values
+('Артём', '89119197174', NOW(), 1),
+('Антон', '89119197174', NOW(), 1);

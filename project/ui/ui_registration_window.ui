@@ -53,7 +53,7 @@
     <item>
      <widget class="QLineEdit" name="line_edit_birthday">
       <property name="placeholderText">
-       <string>Дата рождения</string>
+       <string>Дата рождения (ДД-ММ-ГГГГ)</string>
       </property>
      </widget>
     </item>
