@@ -26,7 +26,7 @@ class RegistrationWindow(QtWidgets.QWidget):
         self._redirect_to_authorize()
 
     def _on_button_registration(self):
-        username = self.__ui.line_edit_username.text()
+        username = self.__ui.line_edit_username.text().replace('\'', '\\\'')
         password = self.__ui.line_edit_password.text()
         password_2 = self.__ui.line_edit_password_2.text()
         birthday = self.__ui.line_edit_birthday.text()

@@ -81,6 +81,7 @@ class DBConnection:
     def _add_contact_to_db(self, name, phone, birthday):
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
+
         query = 'INSERT INTO Contacts (name, phone, birthday, owner_id) values ' \
             '(\'{}\', \'{}\', \'{}\', \'{}\');'.format(
                 name, phone, birthday, current_user_id)
@@ -156,6 +157,8 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
 
     def login(self, username, sha256_password, window=None):
         cur = self._db.cursor()
+        username = username.replace('\'', '\\\'')
+
         query = 'SELECT * FROM Users WHERE username=\'{}\' AND sha256_password=\'{}\';'.format(
             username, sha256_password
         )
