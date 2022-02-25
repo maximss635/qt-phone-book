@@ -88,12 +88,12 @@ class DBConnection:
     def _remove_contact_from_db(self, ids):
         cur = self._db.cursor()
 
-        querry = 'DELETE FROM Contacts WHERE owner_id = 1 AND id IN ('
+        query = 'DELETE FROM Contacts WHERE owner_id = 1 AND id IN ('
         for id in ids:
-            querry += '{}, '.format(id)
-        querry = querry[:-2] + ');'
+            query += '{}, '.format(id)
+        query = query[:-2] + ');'
 
-        cur.execute(querry)
+        cur.execute(query)
 
         cur.close()
         self._db.commit()
