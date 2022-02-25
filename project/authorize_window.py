@@ -1,3 +1,5 @@
+from Crypto.Hash import SHA256
+
 from ui_authorize_window import *
 
 
@@ -21,17 +23,15 @@ class AuthorizeWindow(QtWidgets.QWidget):
 
         self._on_check_box_show_password(False)
 
-        self.__ui.line_edit_username.setText(main_window.settings.value('app-auth/username'))
-        self.__ui.line_edit_password.setText(main_window.settings.value('app-auth/password'))
-
     def _on_button_login(self):
         username = self.__ui.line_edit_username.text()
         password = self.__ui.line_edit_password.text()
+        sha256_password = SHA256.new(bytes(password, encoding='utf-8')).hexdigest()
 
-        user_model = self.__main_window.login(username, password, self)
+        user_model = self.__main_window.login(username, sha256_password, self)
         if (user_model is not None) and self.__ui.check_box_remember.isChecked():
             self.__main_window.settings.setValue('app-auth/username', user_model[1])
-            self.__main_window.settings.setValue('app-auth/password', user_model[2])
+            self.__main_window.settings.setValue('app-auth/sha256-password', sha256_password)
 
         self.close()
         self.__main_window.show()

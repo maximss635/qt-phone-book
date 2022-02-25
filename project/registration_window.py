@@ -1,6 +1,6 @@
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QRegExpValidator
-
+from Crypto.Hash import SHA256
 from ui_registration_window import *
 
 
@@ -15,7 +15,7 @@ class RegistrationWindow(QtWidgets.QWidget):
 
         self.setFixedSize(290, 210)
 
-        expr = QRegExp('(0[1-9]|[12][0-9]|3[01])-(0[1-9]|[1][0-2])-(19[0-9][0-9]|20[0-9][0-9])')
+        expr = QRegExp("(19[0-9][0-9]|20[0-9][0-9])-(0[1-9]|[1][0-2])-(0[1-9]|[12][0-9]|3[01])")
         validator = QRegExpValidator(expr, self)
         self.__ui.line_edit_birthday.setValidator(validator)
 
@@ -37,10 +37,15 @@ class RegistrationWindow(QtWidgets.QWidget):
                                               QtWidgets.QMessageBox.Ok)
             return
 
+        sha256_password = SHA256.new(bytes(password, encoding='utf-8')).hexdigest()
+
         cur = self.__db.cursor()
-        cur.execute('SELECT id FROM Users WHERE username=\'{}\';'.format(
-            username, password
-        ))
+        query = 'SELECT id FROM Users WHERE username=\'{}\';'.format(
+            username, sha256_password
+        )
+
+        self.__authorize_window.logger.debug(query)
+        cur.execute(query)
 
         if cur.fetchone() is not None:
             QtWidgets.QMessageBox.information(self, 'Error',
@@ -48,9 +53,12 @@ class RegistrationWindow(QtWidgets.QWidget):
                                               QtWidgets.QMessageBox.Ok)
             return
 
-        cur.execute('INSERT INTO Users (username, password) VALUES (\'{}\', \'{}\');'.format(
-            username, password
-        ))
+        query = 'INSERT INTO Users (username, sha256_password) VALUES (\'{}\', \'{}\');'.format(
+            username, sha256_password
+        )
+
+        self.__authorize_window.logger.debug(query)
+        cur.execute(query)
 
         cur.close()
         self.__db.commit()

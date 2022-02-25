@@ -5,8 +5,8 @@ import mariadb
 import logging
 
 from ui_main_window import *
-from registration_window import *
 from authorize_window import *
+from registration_window import *
 from reset_password_window import *
 from adding_contact_window import *
 
@@ -29,33 +29,40 @@ class DBConnection:
         formatter = logging.Formatter('%(asctime)s : %(message)s')
         file_handler.setFormatter(formatter)
         stream_handler.setFormatter(formatter)
-        self._logger = logging.getLogger(__name__)
-        self._logger.setLevel(logging.DEBUG)
-        self._logger.addHandler(file_handler)
-        self._logger.addHandler(stream_handler)
+        self.logger = logging.getLogger(__name__)
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.addHandler(file_handler)
+        self.logger.addHandler(stream_handler)
 
     def _load_table(self, letter, view):
-        self._logger.debug('load table \'{}\''.format(letter if letter is not None else 'all'))
-
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
 
         contacts_all = None
         if letter is not None:
-            cur.execute('SELECT id, name, phone, birthday FROM Contacts'
-                        ' WHERE owner_id = \'{}\' AND name LIKE \'{}%\';'.format(
-                            current_user_id, letter))
+            query = 'SELECT id, name, phone, birthday FROM Contacts' \
+                    ' WHERE owner_id = \'{}\' AND name LIKE \'{}%\';'.format(
+                        current_user_id, letter)
+
+            self.logger.debug(query)
+            cur.execute(query)
 
             table_model = cur.fetchall()
 
-            cur.execute('SELECT COUNT(*) AS count FROM Contacts WHERE owner_id = {};'.format(
+            query = 'SELECT COUNT(*) AS count FROM Contacts WHERE owner_id = {};'.format(
                 current_user_id
-            ))
+            )
+
+            self.logger.debug(query)
+            cur.execute(query)
             contacts_all = int(cur.fetchone()[0])
         else:
-            cur.execute('SELECT id, name, phone, birthday FROM Contacts'
-                        ' WHERE owner_id = \'{}\';'.format(
-                            current_user_id))
+            query = 'SELECT id, name, phone, birthday FROM Contacts'\
+                    ' WHERE owner_id = \'{}\';'.format(
+                        current_user_id)
+
+            self.logger.debug(query)
+            cur.execute(query)
 
             table_model = cur.fetchall()
             contacts_all = len(table_model)
@@ -74,31 +81,31 @@ class DBConnection:
     def _add_contact_to_db(self, name, phone, birthday):
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
-
-        cur.execute('INSERT INTO Contacts (name, phone, birthday, owner_id) values ' \
+        query = 'INSERT INTO Contacts (name, phone, birthday, owner_id) values ' \
             '(\'{}\', \'{}\', \'{}\', \'{}\');'.format(
-                name, phone, birthday, current_user_id
-        ))
+                name, phone, birthday, current_user_id)
 
-        cur.close()
-        self._db.commit()
-
-        self._logger.debug('new contact - {}'.format(name))
-
-    def _remove_contact_from_db(self, ids):
-        cur = self._db.cursor()
-
-        query = 'DELETE FROM Contacts WHERE owner_id = 1 AND id IN ('
-        for id in ids:
-            query += '{}, '.format(id)
-        query = query[:-2] + ');'
+        self.logger.debug(query)
 
         cur.execute(query)
 
         cur.close()
         self._db.commit()
 
-        self._logger.debug('delete contacts - {}'.format(ids))
+    def _remove_contact_from_db(self, ids):
+        cur = self._db.cursor()
+        current_user_id = self._current_user[0]
+
+        query = 'DELETE FROM Contacts WHERE owner_id = {} AND id IN ('.format(current_user_id)
+        for id in ids:
+            query += '{}, '.format(id)
+        query = query[:-2] + ');'
+
+        self.logger.debug(query)
+        cur.execute(query)
+
+        cur.close()
+        self._db.commit()
 
 
 class MainWindow(QtWidgets.QMainWindow, DBConnection):
@@ -133,9 +140,9 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         self.__ui.button_delete.clicked.connect(self._on_button_delete)
 
         last_username = self.settings.value('app-auth/username')
-        last_password = self.settings.value('app-auth/password')
-        if (last_username is not None) and (last_password is not None):
-            self.login(last_username, last_password)
+        last_password_hash = self.settings.value('app-auth/sha256-password')
+        if (last_username is not None) and (last_password_hash is not None):
+            self.login(last_username, last_password_hash)
 
     def show(self):
         if self._current_user is not None:
@@ -147,11 +154,14 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         else:
             self.__authorize_window.show()
 
-    def login(self, username, password, window=None):
+    def login(self, username, sha256_password, window=None):
         cur = self._db.cursor()
-        cur.execute('SELECT * FROM Users WHERE username=\'{}\' AND password=\'{}\';'.format(
-            username, password
-        ))
+        query = 'SELECT * FROM Users WHERE username=\'{}\' AND sha256_password=\'{}\';'.format(
+            username, sha256_password
+        )
+        self.logger.debug(query)
+
+        cur.execute(query)
 
         self._current_user = cur.fetchone()
         if self._current_user is None:
@@ -160,8 +170,6 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
                                               QtWidgets.QMessageBox.Ok)
             return None
 
-        self._logger.debug('login - {}'.format(username))
-
         cur.close()
 
         return self._current_user
@@ -169,7 +177,7 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
     def logout(self):
         self._current_user = None
         self.settings.remove('app-auth/username')
-        self.settings.remove('app-auth/password')
+        self.settings.remove('app-auth/sha256-password')
         self.close()
         self.__authorize_window.show()
 
@@ -188,8 +196,8 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         if exit_code != 0:
             name, phone, birthday = adding_contact_window.get_object()
             self._add_contact_to_db(name, phone, birthday)
-            self._load_table(name[0], self.__ui)
 
+            self._load_table(name[0], self.__ui)
             self.__ui.check_box_show_all.setChecked(False)
             for i in range(self.__ui.navigation_panel.count()):
                 item = self.__ui.navigation_panel.item(i)

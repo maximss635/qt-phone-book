@@ -20,7 +20,7 @@ class AddingContactWindow(QtWidgets.QDialog):
         validator = QRegExpValidator(expr, self)
         self.__ui.line_edit_phone.setValidator(validator)
 
-        expr = QRegExp('([а-я]|[А-Я])*')
+        expr = QRegExp('([а-я]|[А-Я]|\s)*')
         validator = QRegExpValidator(expr, self)
         self.__ui.line_edit_name.setValidator(validator)
         self.__ui.line_edit_name.setMaxLength(50)
