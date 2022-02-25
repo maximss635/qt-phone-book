@@ -24,7 +24,7 @@
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QLineEdit" name="lineEdit">
+     <widget class="QLineEdit" name="line_edit_username">
       <property name="text">
        <string/>
       </property>
@@ -37,21 +37,21 @@
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit_3">
+     <widget class="QLineEdit" name="line_edit_password">
       <property name="placeholderText">
        <string>Пароль</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit_2">
+     <widget class="QLineEdit" name="line_edit_password_2">
       <property name="placeholderText">
        <string>Повторите пароль</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="QLineEdit" name="lineEdit_4">
+     <widget class="QLineEdit" name="line_edit_birthday">
       <property name="placeholderText">
        <string>Дата рождения</string>
       </property>

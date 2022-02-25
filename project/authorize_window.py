@@ -1,79 +1,47 @@
 from ui_authorize_window import *
-from registration_window import *
-from reset_password_window import *
-from main_window import *
-from PyQt5.QtCore import QSettings
-import mariadb
 
 
 class AuthorizeWindow(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, main_window, registration_window, reset_password_window):
         super(AuthorizeWindow, self).__init__()
+
+        self.__main_window = main_window
+        self.__registration_window = registration_window
+        self.__reset_password_window = reset_password_window
 
         self.__ui = Ui_AuthorizeWindow()
         self.__ui.setupUi(self)
-        self.setFixedSize(*WINDOW_SIZE)
-
-        self.__main_window = None
-        self.__registration_window = RegistrationWindow(self)
-        self.__reset_password_window = ResetPasswordWindow(self)
+        self.setFixedSize(290, 210)
 
         self.__ui.button_registration.clicked.connect(self._on_button_registration)
         self.__ui.button_login.clicked.connect(self._on_button_login)
-        self.__ui.button_cancel.clicked.connect(self._on_button_cancel)
+        self.__ui.button_cancel.clicked.connect(self.close)
         self.__ui.button_reset_password.clicked.connect(self._on_button_reset_password)
         self.__ui.check_box_show_pasword.clicked.connect(self._on_check_box_show_password)
 
         self._on_check_box_show_password(False)
 
-        file_handler = logging.FileHandler('authorize.log')
-        file_handler.setFormatter(logging.Formatter('%(asctime)s : %(message)s'))
-        self.__logger = logging.getLogger(__name__)
-        self.__logger.setLevel(logging.DEBUG)
-        self.__logger.addHandler(file_handler)
-
-        self.__settings = QSettings('settings.ini', QSettings.IniFormat)
-        self.__ui.line_edit_username.setText(self.__settings.value('auth/username'))
-        self.__ui.line_edit_password.setText(self.__settings.value('auth/password'))
-
-        db_params = {
-            'user': 'root',
-            'password': 'root',
-            'host': '127.0.0.1',
-            'database': 'my_test_db',
-        }
-
-        self.__db = mariadb.connect(**db_params)
-
-    def _on_button_registration(self):
-        self.__registration_window.show()
-        self.close()
+        self.__ui.line_edit_username.setText(main_window.settings.value('app-auth/username'))
+        self.__ui.line_edit_password.setText(main_window.settings.value('app-auth/password'))
 
     def _on_button_login(self):
         username = self.__ui.line_edit_username.text()
         password = self.__ui.line_edit_password.text()
 
-        if self.__ui.check_box_remember.isChecked():
-            self.__settings.setValue('auth/username', username)
-            self.__settings.setValue('auth/password', password)
+        user_model = self.__main_window.login(username, password, self)
+        if (user_model is not None) and self.__ui.check_box_remember.isChecked():
+            self.__main_window.settings.setValue('app-auth/username', user_model[1])
+            self.__main_window.settings.setValue('app-auth/password', user_model[2])
 
-        cur = self.__db.cursor()
-        cur.execute('SELECT * FROM Users WHERE username=\'{}\' and password=\'{}\';'.format(
-            username, password
-        ))
+        self.close()
+        self.__main_window.show()
 
-        if cur.fetchone() is not None:
-            self.__main_window = MainWindow(username, self)
-            self.__main_window.show()
-            self.close()
-        else:
-            QtWidgets.QMessageBox.information(self, 'Error',
-                                              'Пользователя с таким именем или паролем не существует',
-                                              QtWidgets.QMessageBox.Ok)
+    def _on_button_reset_password(self):
+        self.__reset_password_window.show()
+        self.close()
 
-
-
-    def _on_button_cancel(self):
+    def _on_button_registration(self):
+        self.__registration_window.show()
         self.close()
 
     def _on_check_box_show_password(self, checked):
@@ -82,6 +50,6 @@ class AuthorizeWindow(QtWidgets.QWidget):
         else:
             self.__ui.line_edit_password.setEchoMode(QtWidgets.QLineEdit.EchoMode.Password)
 
-    def _on_button_reset_password(self):
-        self.__reset_password_window.show()
-        self.close()
+    def closeEvent(self, event):
+        self.__ui.line_edit_username.clear()
+        self.__ui.line_edit_password.clear()

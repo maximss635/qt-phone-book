@@ -1,13 +1,14 @@
 from PyQt5.QtWidgets import QApplication
-from authorize_window import *
 from sys import argv
+
+from main_window import *
 
 
 def main():
     app = QApplication(argv)
 
-    authorized_window = AuthorizeWindow()
-    authorized_window.show()
+    main_window = MainWindow()
+    main_window.show()
 
     return app.exec()
 
