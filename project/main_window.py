@@ -128,7 +128,7 @@ class DBConnection:
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
 
-        query = 'SELECT name '\
+        query = 'SELECT name, DATE_FORMAT(birthday, \'%m-%d\') as birthday '\
                 'FROM Contacts '\
                 'WHERE owner_id={} AND '\
                 'DATE_FORMAT(birthday, \'%m-%d\') >= DATE_FORMAT(CURDATE(), \'%m-%d\') AND '\
@@ -179,6 +179,7 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         self.__ui.button_delete.clicked.connect(self._on_button_delete)
         self.__ui.button_update.clicked.connect(self._on_button_update)
         self.__ui.table_contacts.cellDoubleClicked.connect(self._on_button_update)
+        self.__ui.button_check_birthday.clicked.connect(self._on_button_check_birthday)
 
         last_username = self.settings.value('app-auth/username')
         last_password_hash = self.settings.value('app-auth/sha256-password')
@@ -334,9 +335,21 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
                 selected_items = self.__ui.navigation_panel.selectedItems()
                 self._db_read_contacts(selected_items[0].text(), self.__ui)
 
+    def _on_button_check_birthday(self):
+        check = self._check_birthday_people()
+        if not check:
+            QtWidgets.QMessageBox.information(None, 'Напоминание', 'В ближайшую неделю именинников не планируется')
+
     def _check_birthday_people(self):
         birthday_people = self._db_check_birthday_people()
 
         if len(birthday_people) > 0:
-            QtWidgets.QMessageBox.information(self, 'Напоминание',
-                                              'В ближайшую неделю дни рождения у: {}'.format(birthday_people))
+            banner = 'В ближайшую неделю дни рождения у следующих людей:\n'
+            for name, birthday in birthday_people:
+                banner += '{} ({})\n'.format(name, birthday)
+
+            QtWidgets.QMessageBox.information(None, 'Напоминание', banner)
+
+            return True
+
+        return False
