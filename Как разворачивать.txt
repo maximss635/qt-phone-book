@@ -1,0 +1,24 @@
+В системе должны быть установлены qt-creator (приложение использует PyQt5), СУБД mariadb и python3.9
+Также нужно поставить некоторые пакеты через pip - в project/ есть requirements.txt
+pip install -r requirements.txt
+
+Необходимо подготовить пользователя базы данных maridb через которого будут осуществляться запросы
+и внести его в файл settings.ini. Пример:
+
+// settings.init
+[db-connection]
+database_name=phone_book
+host=127.0.0.1
+password=root
+user=root
+
+название базы данных обязательно оставить phone_book
+
+Далее необходимо провести миграцию скриптом Database/init.sql:
+mariadb -u *пользователь* -p < Database/init.sql
+
+Скрипт создаст таблицы и внесет тестового пользователя для приложения (admin, пароль - admin)
+Также внесет несколько тестовых записей
+
+После этого приложение можно запускать:
+python main.py
