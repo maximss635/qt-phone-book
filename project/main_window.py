@@ -40,9 +40,9 @@ class DBConnection:
 
         contacts_all = None
         if letter is not None:
-            query = 'SELECT id, name, phone, birthday FROM Contacts' \
-                    ' WHERE owner_id = \'{}\' AND name LIKE \'{}%\';'.format(
-                        current_user_id, letter)
+            query = 'SELECT id, name, phone, birthday '\
+                    'FROM Contacts ' \
+                    'WHERE owner_id = \'{}\' AND name LIKE \'{}%\';'.format(current_user_id, letter)
 
             self.logger.debug(query)
             cur.execute(query)
@@ -97,7 +97,9 @@ class DBConnection:
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
 
-        query = 'DELETE FROM Contacts WHERE owner_id = {} AND id IN ('.format(current_user_id)
+        query = 'DELETE FROM Contacts '\
+                'WHERE owner_id = {} AND id IN ('.format(current_user_id)
+
         for id in ids:
             query += '{}, '.format(id)
         query = query[:-2] + ');'
@@ -112,16 +114,34 @@ class DBConnection:
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
 
-        query = 'UPDATE Contacts SET phone=\'{}\', birthday=\'{}\', name=\'{}\' '\
-                'where id={} and owner_id={};'.format(
-            phone, birthday, name, id, current_user_id
-        )
+        query = 'UPDATE Contacts '\
+                'SET phone=\'{}\', birthday=\'{}\', name=\'{}\' '\
+                'WHERE id={} and owner_id={};'.format(phone, birthday, name, id, current_user_id)
 
         self.logger.debug(query)
         cur.execute(query)
 
         cur.close()
         self._db.commit()
+
+    def _db_check_birthday_people(self):
+        cur = self._db.cursor()
+        current_user_id = self._current_user[0]
+
+        query = 'SELECT name '\
+                'FROM Contacts '\
+                'WHERE owner_id={} AND '\
+                'DATE_FORMAT(birthday, \'%m-%d\') >= DATE_FORMAT(CURDATE(), \'%m-%d\') AND '\
+                'DATE_FORMAT(birthday, \'%m-%d\') < DATE_FORMAT(CURDATE() + INTERVAL 7 DAY, \'%m-%d\');'\
+            .format(current_user_id)
+
+        self.logger.debug(query)
+        cur.execute(query)
+
+        results = cur.fetchall()
+        cur.close()
+
+        return results
 
 
 class MainWindow(QtWidgets.QMainWindow, DBConnection):
@@ -130,6 +150,7 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
 
         self.__ui = Ui_MainWindow()
         self.__ui.setupUi(self)
+        self.setWindowTitle('Главное окно')
 
         # Windows
         self.__registration_window = RegistrationWindow(self, self._db)
@@ -171,6 +192,9 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
             self.__ui.navigation_panel.item(0).setSelected(True)
 
             super(MainWindow, self).show()
+
+            if self._current_user is not None:
+                self._check_birthday_people()
         else:
             self.__authorize_window.show()
 
@@ -178,9 +202,10 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         cur = self._db.cursor()
         username = username.replace('\'', '\\\'')
 
-        query = 'SELECT * FROM Users WHERE username=\'{}\' AND sha256_password=\'{}\';'.format(
-            username, sha256_password
-        )
+        query = 'SELECT * '\
+                'FROM Users '\
+                'WHERE username=\'{}\' AND sha256_password=\'{}\';'.format(username, sha256_password)
+
         self.logger.debug(query)
 
         cur.execute(query)
@@ -308,3 +333,10 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
             else:
                 selected_items = self.__ui.navigation_panel.selectedItems()
                 self._db_read_contacts(selected_items[0].text(), self.__ui)
+
+    def _check_birthday_people(self):
+        birthday_people = self._db_check_birthday_people()
+
+        if len(birthday_people) > 0:
+            QtWidgets.QMessageBox.information(self, 'Напоминание',
+                                              'В ближайшую неделю дни рождения у: {}'.format(birthday_people))

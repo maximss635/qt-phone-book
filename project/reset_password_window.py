@@ -10,6 +10,7 @@ class ResetPasswordWindow(QtWidgets.QWidget):
         self.__ui = Ui_ResetPasswordWindow()
         self.__ui.setupUi(self)
         self.setFixedSize(290, 210)
+        self.setWindowTitle('Восстановление пароля')
 
         self.__ui.button_change_password.clicked.connect(self._on_button_change_password)
         self.__ui.button_cancel.clicked.connect(self._on_button_cancel)

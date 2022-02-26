@@ -12,6 +12,7 @@ class RegistrationWindow(QtWidgets.QWidget):
         self.__authorize_window = authorize_window
         self.__ui = Ui_RegistrationWindow()
         self.__ui.setupUi(self)
+        self.setWindowTitle('Регистрация')
 
         self.setFixedSize(290, 210)
 
@@ -40,9 +41,9 @@ class RegistrationWindow(QtWidgets.QWidget):
         sha256_password = SHA256.new(bytes(password, encoding='utf-8')).hexdigest()
 
         cur = self.__db.cursor()
-        query = 'SELECT id FROM Users WHERE username=\'{}\';'.format(
-            username, sha256_password
-        )
+        query = 'SELECT id '\
+                'FROM Users '\
+                'WHERE username=\'{}\';'.format(username, sha256_password)
 
         self.__authorize_window.logger.debug(query)
         cur.execute(query)
@@ -53,9 +54,8 @@ class RegistrationWindow(QtWidgets.QWidget):
                                               QtWidgets.QMessageBox.Ok)
             return
 
-        query = 'INSERT INTO Users (username, sha256_password) VALUES (\'{}\', \'{}\');'.format(
-            username, sha256_password
-        )
+        query = 'INSERT INTO Users (username, sha256_password) VALUES '\
+                '(\'{}\', \'{}\');'.format(username, sha256_password)
 
         self.__authorize_window.logger.debug(query)
         cur.execute(query)

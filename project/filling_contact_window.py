@@ -11,6 +11,7 @@ class FillingContactWindow(QtWidgets.QDialog):
         self.__ui = Ui_FillingContactWindow()
         self.__ui.setupUi(self)
         self.setFixedSize(370, 210)
+        self.setWindowTitle('Заполнение контакта')
 
         expr = QRegExp("(19[0-9][0-9]|20[0-9][0-9])-(0[1-9]|[1][0-2])-(0[1-9]|[12][0-9]|3[01])")
         validator = QRegExpValidator(expr, self)

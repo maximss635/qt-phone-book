@@ -14,6 +14,7 @@ class AuthorizeWindow(QtWidgets.QWidget):
         self.__ui = Ui_AuthorizeWindow()
         self.__ui.setupUi(self)
         self.setFixedSize(290, 210)
+        self.setWindowTitle('Авторизация')
 
         self.__ui.button_registration.clicked.connect(self._on_button_registration)
         self.__ui.button_login.clicked.connect(self._on_button_login)
