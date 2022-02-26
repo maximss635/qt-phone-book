@@ -8,7 +8,7 @@ from ui_main_window import *
 from authorize_window import *
 from registration_window import *
 from reset_password_window import *
-from adding_contact_window import *
+from filling_contact_window import *
 
 
 class DBConnection:
@@ -34,7 +34,7 @@ class DBConnection:
         self.logger.addHandler(file_handler)
         self.logger.addHandler(stream_handler)
 
-    def _load_table(self, letter, view):
+    def _db_read_contacts(self, letter, view):
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
 
@@ -78,7 +78,7 @@ class DBConnection:
 
         view.label_status.setText('Всего: {}, Загружено: {}'.format(contacts_all, len(table_model)))
 
-    def _add_contact_to_db(self, name, phone, birthday):
+    def _db_add_contact(self, name, phone, birthday):
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
 
@@ -93,7 +93,7 @@ class DBConnection:
         cur.close()
         self._db.commit()
 
-    def _remove_contact_from_db(self, ids):
+    def _db_remove_contact(self, ids):
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
 
@@ -101,6 +101,21 @@ class DBConnection:
         for id in ids:
             query += '{}, '.format(id)
         query = query[:-2] + ');'
+
+        self.logger.debug(query)
+        cur.execute(query)
+
+        cur.close()
+        self._db.commit()
+
+    def _db_update_contact(self, id, name, phone, birthday):
+        cur = self._db.cursor()
+        current_user_id = self._current_user[0]
+
+        query = 'UPDATE Contacts SET phone=\'{}\', birthday=\'{}\', name=\'{}\' '\
+                'where id={} and owner_id={};'.format(
+            phone, birthday, name, id, current_user_id
+        )
 
         self.logger.debug(query)
         cur.execute(query)
@@ -127,6 +142,8 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         self.setCentralWidget(central_widget)
         self.__ui.navigation_panel.setFixedWidth(100)
         self.__ui.button_delete.setEnabled(False)
+        self.__ui.button_update.setEnabled(False)
+        self.__ui.table_contacts.setEditTriggers(QtWidgets.QAbstractItemView.EditTrigger.NoEditTriggers)
 
         # do not show ids
         self.__ui.table_contacts.setColumnHidden(3, True)
@@ -139,6 +156,8 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         self.__ui.table_contacts.cellClicked.connect(self._on_contact_clicked)
         self.__ui.table_contacts.cellEntered.connect(self._on_contact_clicked)
         self.__ui.button_delete.clicked.connect(self._on_button_delete)
+        self.__ui.button_update.clicked.connect(self._on_button_update)
+        self.__ui.table_contacts.cellDoubleClicked.connect(self._on_button_update)
 
         last_username = self.settings.value('app-auth/username')
         last_password_hash = self.settings.value('app-auth/sha256-password')
@@ -148,7 +167,7 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
     def show(self):
         if self._current_user is not None:
             self.__ui.label_hello.setText('Вы вошли, как {}'.format(self._current_user[1]))
-            self._load_table('А', self.__ui)
+            self._db_read_contacts('А', self.__ui)
             self.__ui.navigation_panel.item(0).setSelected(True)
 
             super(MainWindow, self).show()
@@ -168,7 +187,7 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
 
         self._current_user = cur.fetchone()
         if self._current_user is None:
-            QtWidgets.QMessageBox.information(window, 'Error',
+            QtWidgets.QMessageBox.information(window, 'Ошибка',
                                               'Пользователь с такими данными не найден',
                                               QtWidgets.QMessageBox.Ok)
             return None
@@ -187,20 +206,43 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
     def _on_navigation_panel_clicked(self, index):
         self.__ui.check_box_show_all.setChecked(False)
         letter = index.data()
-        self._load_table(letter, self.__ui)
+        self._db_read_contacts(letter, self.__ui)
+
+    def _on_check_box_show_all(self, checked):
+        if checked:
+            self._db_read_contacts(None, self.__ui)
+            for item in self.__ui.navigation_panel.selectedItems():
+                item.setSelected(False)
+        else:
+            self._db_read_contacts('А', self.__ui)
+            self.__ui.navigation_panel.item(0).setSelected(True)
+
+    def _on_contact_clicked(self, row, column):
+        self.__ui.button_delete.setEnabled(True)
+        self.__ui.button_update.setEnabled(True)
+
+    def __get_ids_of_selected_contacts(self):
+        ids = set()
+        selected_indexes = self.__ui.table_contacts.selectedIndexes()
+        for index in selected_indexes:
+            row = index.row()
+            ids.add(int(self.__ui.table_contacts.item(row, 3).text()))  # hidden column with ids
+
+        return ids
 
     def _on_button_add(self):
-        adding_contact_window = AddingContactWindow()
+        filling_contact_window = FillingContactWindow()
 
         self.setEnabled(False)
-        exit_code = adding_contact_window.exec()
+        exit_code = filling_contact_window.exec()
         self.setEnabled(True)
 
         if exit_code != 0:
-            name, phone, birthday = adding_contact_window.get_object()
-            self._add_contact_to_db(name, phone, birthday)
+            name, phone, birthday = filling_contact_window.get_object()
+            self._db_add_contact(name, phone, birthday)
 
-            self._load_table(name[0], self.__ui)
+            # Update in view
+            self._db_read_contacts(name[0], self.__ui)
             self.__ui.check_box_show_all.setChecked(False)
             for i in range(self.__ui.navigation_panel.count()):
                 item = self.__ui.navigation_panel.item(i)
@@ -208,29 +250,13 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
                     item.setSelected(True)
                     break
 
-    def _on_check_box_show_all(self, checked):
-        if checked:
-            self._load_table(None, self.__ui)
-            for item in self.__ui.navigation_panel.selectedItems():
-                item.setSelected(False)
-        else:
-            self._load_table('А', self.__ui)
-            self.__ui.navigation_panel.item(0).setSelected(True)
-
-    def _on_contact_clicked(self, row, column):
-        self.__ui.button_delete.setEnabled(True)
-
     def _on_button_delete(self):
         selected_indexes = self.__ui.table_contacts.selectedIndexes()
         if len(selected_indexes) == 0:
             self.__ui.button_delete.setEnabled(False)
             return
 
-        ids_to_remove = set()
-        for index in selected_indexes:
-            row = index.row()
-            ids_to_remove.add(int(self.__ui.table_contacts.item(row, 3).text()))
-
+        ids_to_remove = self.__get_ids_of_selected_contacts()
         buttons = QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
         answer = QtWidgets.QMessageBox.question(self, 'Подтвердите действие',
                                               'Вы уверены, что хотите удалить {} контактов?'.format(len(ids_to_remove)),
@@ -239,10 +265,46 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         if answer == QtWidgets.QMessageBox.No:
             return
 
-        self._remove_contact_from_db(ids_to_remove)
+        self._db_remove_contact(ids_to_remove)
 
+        # Update in view
         if self.__ui.check_box_show_all.isChecked():
-            self._load_table(None, self.__ui)
+            self._db_read_contacts(None, self.__ui)
         else:
             selected_items = self.__ui.navigation_panel.selectedItems()
-            self._load_table(selected_items[0].text(), self.__ui)
+            self._db_read_contacts(selected_items[0].text(), self.__ui)
+
+    def _on_button_update(self):
+        selected_indexes = self.__ui.table_contacts.selectedIndexes()
+        if len(selected_indexes) == 0:
+            self.__ui.button_update.setEnabled(False)
+            return
+
+        ids_to_update = self.__get_ids_of_selected_contacts()
+        if len(ids_to_update) != 1:
+            QtWidgets.QMessageBox.information(self, 'Ошибка', 'Пожалуйста, выделите одну строчку для редактирования')
+            return
+
+        row = selected_indexes[0].row()
+
+        name = self.__ui.table_contacts.item(row, 0).text()
+        phone = self.__ui.table_contacts.item(row, 1).text()
+        birthday = self.__ui.table_contacts.item(row, 2).text()
+        id = int(self.__ui.table_contacts.item(row, 3).text())
+
+        filling_contact_window = FillingContactWindow(name, phone, birthday)
+
+        self.setEnabled(False)
+        exit_code = filling_contact_window.exec()
+        self.setEnabled(True)
+
+        if exit_code != 0:
+            name, phone, birthday = filling_contact_window.get_object()
+            self._db_update_contact(id, name, phone, birthday)
+
+            # Update in view
+            if self.__ui.check_box_show_all.isChecked():
+                self._db_read_contacts(None, self.__ui)
+            else:
+                selected_items = self.__ui.navigation_panel.selectedItems()
+                self._db_read_contacts(selected_items[0].text(), self.__ui)

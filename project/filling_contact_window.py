@@ -1,14 +1,14 @@
 from PyQt5.QtCore import QRegExp
 from PyQt5.QtGui import QValidator, QRegExpValidator
 
-from ui_adding_contact_window import *
+from ui_filling_contact_window import *
 
 
-class AddingContactWindow(QtWidgets.QDialog):
-    def __init__(self):
-        super(AddingContactWindow, self).__init__()
+class FillingContactWindow(QtWidgets.QDialog):
+    def __init__(self, name=None, phone=None, birthday=None):
+        super(FillingContactWindow, self).__init__()
 
-        self.__ui = Ui_AddingContactWindow()
+        self.__ui = Ui_FillingContactWindow()
         self.__ui.setupUi(self)
         self.setFixedSize(370, 210)
 
@@ -25,6 +25,10 @@ class AddingContactWindow(QtWidgets.QDialog):
         self.__ui.line_edit_name.setValidator(validator)
         self.__ui.line_edit_name.setMaxLength(50)
 
+        self.__ui.line_edit_name.setText(name)
+        self.__ui.line_edit_phone.setText(phone)
+        self.__ui.line_edit_birthday.setText(birthday)
+
     def get_object(self):
         return (self.__ui.line_edit_name.text(),
                 self.__ui.line_edit_phone.text(),
@@ -37,4 +41,4 @@ class AddingContactWindow(QtWidgets.QDialog):
             self.__ui.label_info.setText('Ошибка заполнения')
             return None
 
-        return super(AddingContactWindow, self).accept()
+        return super(FillingContactWindow, self).accept()

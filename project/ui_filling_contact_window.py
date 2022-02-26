@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui/ui_adding_contact_window.ui'
+# Form implementation generated from reading ui file 'ui/ui_filling_contact_window.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.6
 #
@@ -11,16 +11,16 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
-class Ui_AddingContactWindow(object):
-    def setupUi(self, AddingContactWindow):
-        AddingContactWindow.setObjectName("AddingContactWindow")
-        AddingContactWindow.resize(370, 208)
-        self.buttonBox = QtWidgets.QDialogButtonBox(AddingContactWindow)
+class Ui_FillingContactWindow(object):
+    def setupUi(self, FillingContactWindow):
+        FillingContactWindow.setObjectName("FillingContactWindow")
+        FillingContactWindow.resize(370, 208)
+        self.buttonBox = QtWidgets.QDialogButtonBox(FillingContactWindow)
         self.buttonBox.setGeometry(QtCore.QRect(180, 170, 181, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.layoutWidget = QtWidgets.QWidget(AddingContactWindow)
+        self.layoutWidget = QtWidgets.QWidget(FillingContactWindow)
         self.layoutWidget.setGeometry(QtCore.QRect(10, 20, 351, 141))
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.layoutWidget)
@@ -37,19 +37,19 @@ class Ui_AddingContactWindow(object):
         self.line_edit_birthday.setText("")
         self.line_edit_birthday.setObjectName("line_edit_birthday")
         self.verticalLayout.addWidget(self.line_edit_birthday)
-        self.label_info = QtWidgets.QLabel(AddingContactWindow)
+        self.label_info = QtWidgets.QLabel(FillingContactWindow)
         self.label_info.setGeometry(QtCore.QRect(10, 170, 211, 31))
         self.label_info.setText("")
         self.label_info.setObjectName("label_info")
 
-        self.retranslateUi(AddingContactWindow)
-        self.buttonBox.accepted.connect(AddingContactWindow.accept) # type: ignore
-        self.buttonBox.rejected.connect(AddingContactWindow.reject) # type: ignore
-        QtCore.QMetaObject.connectSlotsByName(AddingContactWindow)
+        self.retranslateUi(FillingContactWindow)
+        self.buttonBox.accepted.connect(FillingContactWindow.accept) # type: ignore
+        self.buttonBox.rejected.connect(FillingContactWindow.reject) # type: ignore
+        QtCore.QMetaObject.connectSlotsByName(FillingContactWindow)
 
-    def retranslateUi(self, AddingContactWindow):
+    def retranslateUi(self, FillingContactWindow):
         _translate = QtCore.QCoreApplication.translate
-        AddingContactWindow.setWindowTitle(_translate("AddingContactWindow", "Dialog"))
-        self.line_edit_name.setPlaceholderText(_translate("AddingContactWindow", "Имя (только русские буквы)"))
-        self.line_edit_phone.setPlaceholderText(_translate("AddingContactWindow", "Телефон"))
-        self.line_edit_birthday.setPlaceholderText(_translate("AddingContactWindow", "Дата рождения (ГГГГ-ММ-ДД)"))
+        FillingContactWindow.setWindowTitle(_translate("FillingContactWindow", "Dialog"))
+        self.line_edit_name.setPlaceholderText(_translate("FillingContactWindow", "Имя (только русские буквы)"))
+        self.line_edit_phone.setPlaceholderText(_translate("FillingContactWindow", "Телефон"))
+        self.line_edit_birthday.setPlaceholderText(_translate("FillingContactWindow", "Дата рождения (ГГГГ-ММ-ДД)"))

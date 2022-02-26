@@ -48,7 +48,7 @@ class RegistrationWindow(QtWidgets.QWidget):
         cur.execute(query)
 
         if cur.fetchone() is not None:
-            QtWidgets.QMessageBox.information(self, 'Error',
+            QtWidgets.QMessageBox.information(self, 'Ошибка',
                                               'Пользователь \'{}\' уже существует'.format(username),
                                               QtWidgets.QMessageBox.Ok)
             return
