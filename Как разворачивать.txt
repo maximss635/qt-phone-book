@@ -1,4 +1,8 @@
 В системе должны быть установлены qt-creator (приложение использует PyQt5), СУБД mariadb и python3.9
+НАпример, для linux debian: "apt install qtcreator python3 mariadb-server mariadb-client"
+
+База данных должна быть включена: "systemctl start mariadb.service"
+
 Также нужно поставить некоторые пакеты через pip - в project/ есть requirements.txt
 pip install -r requirements.txt
 
@@ -22,3 +26,4 @@ mariadb -u *пользователь* -p < Database/init.sql
 
 После этого приложение можно запускать:
 python main.py
+все должно проходить без эксепшенов
