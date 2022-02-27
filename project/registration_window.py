@@ -20,11 +20,8 @@ class RegistrationWindow(QtWidgets.QWidget):
         validator = QRegExpValidator(expr, self)
         self.__ui.line_edit_birthday.setValidator(validator)
 
-        self.__ui.button_cancel.clicked.connect(self._on_button_cancel)
+        self.__ui.button_cancel.clicked.connect(self._redirect_to_authorize)
         self.__ui.button_registration.clicked.connect(self._on_button_registration)
-
-    def _on_button_cancel(self):
-        self._redirect_to_authorize()
 
     def _on_button_registration(self):
         username = self.__ui.line_edit_username.text().replace('\'', '\\\'')
@@ -33,9 +30,8 @@ class RegistrationWindow(QtWidgets.QWidget):
         birthday = self.__ui.line_edit_birthday.text()
 
         if password_2 != password:
-            QtWidgets.QMessageBox.information(self, 'Error',
-                                              'Пароли не совпадают',
-                                              QtWidgets.QMessageBox.Ok)
+            message = 'Пароли не совпадают'
+            QtWidgets.QMessageBox.information(self, 'Ошибка', message)
             return
 
         sha256_password = SHA256.new(bytes(password, encoding='utf-8')).hexdigest()
@@ -49,9 +45,8 @@ class RegistrationWindow(QtWidgets.QWidget):
         cur.execute(query)
 
         if cur.fetchone() is not None:
-            QtWidgets.QMessageBox.information(self, 'Ошибка',
-                                              'Пользователь \'{}\' уже существует'.format(username),
-                                              QtWidgets.QMessageBox.Ok)
+            message = 'Пользователь \'{}\' уже существует'.format(username)
+            QtWidgets.QMessageBox.information(self, 'Ошибка', message)
             return
 
         query = 'INSERT INTO Users (username, sha256_password) VALUES '\
@@ -62,6 +57,9 @@ class RegistrationWindow(QtWidgets.QWidget):
 
         cur.close()
         self.__db.commit()
+
+        message = 'Пользователь \'{}\' создан успешно!'.format(username)
+        QtWidgets.QMessageBox.information(self, 'Успех', message)
 
         self._redirect_to_authorize()
 

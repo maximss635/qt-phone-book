@@ -82,6 +82,17 @@ class DBConnection:
         cur = self._db.cursor()
         current_user_id = self._current_user[0]
 
+        query = 'SELECT id '\
+                'FROM Contacts '\
+                'WHERE owner_id={} AND name=\'{}\' AND phone=\'{}\' AND birthday=\'{}\';'\
+            .format(current_user_id, name, phone, birthday)
+
+        self.logger.debug(query)
+        cur.execute(query)
+        if cur.fetchone() is not None:
+            cur.close()
+            return False
+
         query = 'INSERT INTO Contacts (name, phone, birthday, owner_id) values ' \
             '(\'{}\', \'{}\', \'{}\', \'{}\');'.format(
                 name, phone, birthday, current_user_id)
@@ -92,6 +103,8 @@ class DBConnection:
 
         cur.close()
         self._db.commit()
+
+        return True
 
     def _db_remove_contact(self, ids):
         cur = self._db.cursor()
@@ -171,7 +184,7 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
 
         # Handlers
         self.__ui.button_add.clicked.connect(self._on_button_add)
-        self.__ui.button_logout.clicked.connect(self.logout)
+        self.__ui.button_logout.clicked.connect(self._on_button_logout)
         self.__ui.navigation_panel.clicked.connect(self._on_navigation_panel_clicked)
         self.__ui.check_box_show_all.clicked.connect(self._on_check_box_show_all)
         self.__ui.table_contacts.cellClicked.connect(self._on_contact_clicked)
@@ -213,9 +226,8 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
 
         self._current_user = cur.fetchone()
         if self._current_user is None:
-            QtWidgets.QMessageBox.information(window, 'Ошибка',
-                                              'Пользователь с такими данными не найден',
-                                              QtWidgets.QMessageBox.Ok)
+            message = 'Пользователь с такими данными не найден'
+            QtWidgets.QMessageBox.information(window, 'Ошибка', message)
             return None
 
         cur.close()
@@ -228,6 +240,12 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
         self.settings.remove('app-auth/sha256-password')
         self.close()
         self.__authorize_window.show()
+
+    def _on_button_logout(self):
+        message = 'Вы уверены, что хотите выйти?'
+        answer = QtWidgets.QMessageBox.question(self, 'Подтвердите действие', message)
+        if answer == QtWidgets.QMessageBox.Yes:
+            self.logout()
 
     def _on_navigation_panel_clicked(self, index):
         self.__ui.check_box_show_all.setChecked(False)
@@ -265,7 +283,11 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
 
         if exit_code != 0:
             name, phone, birthday = filling_contact_window.get_object()
-            self._db_add_contact(name, phone, birthday)
+            success = self._db_add_contact(name, phone, birthday)
+            if not success:
+                message = 'Такой контакт уже существует'
+                QtWidgets.QMessageBox.information(self, 'Ошибка', message)
+                return
 
             # Update in view
             self._db_read_contacts(name[0], self.__ui)
@@ -283,10 +305,8 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
             return
 
         ids_to_remove = self.__get_ids_of_selected_contacts()
-        buttons = QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No
-        answer = QtWidgets.QMessageBox.question(self, 'Подтвердите действие',
-                                              'Вы уверены, что хотите удалить {} контактов?'.format(len(ids_to_remove)),
-                                              buttons)
+        message = 'Вы уверены, что хотите удалить {} контактов?'.format(len(ids_to_remove))
+        answer = QtWidgets.QMessageBox.question(self, 'Подтвердите действие', message)
 
         if answer == QtWidgets.QMessageBox.No:
             return
@@ -308,7 +328,8 @@ class MainWindow(QtWidgets.QMainWindow, DBConnection):
 
         ids_to_update = self.__get_ids_of_selected_contacts()
         if len(ids_to_update) != 1:
-            QtWidgets.QMessageBox.information(self, 'Ошибка', 'Пожалуйста, выделите одну строчку для редактирования')
+            message = 'Пожалуйста, выделите одну строчку для редактирования'
+            QtWidgets.QMessageBox.information(self, 'Ошибка', message)
             return
 
         row = selected_indexes[0].row()
